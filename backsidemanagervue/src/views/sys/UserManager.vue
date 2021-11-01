@@ -52,7 +52,7 @@
           label="角色名称"
           show-overflow-tooltip>
         <template scope="scope">
-          <el-tag size="small" type="info" v-for="item in scope.row.roles">{{item.name}}</el-tag>
+          <el-tag size="small" type="info" v-for="item in scope.row.sysRoles">{{item.name}}</el-tag>
         </template>
       </el-table-column>
 
@@ -91,13 +91,21 @@
         <template slot-scope="scope">
           <el-button type="text" @click="roleHandle(scope.row.id)">分配角色</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button type="text" @click="">重置密码</el-button>
+<!--          <el-button type="text" @click="resetPass()">重置密码</el-button>-->
+          <template>
+            <el-popconfirm
+                title="确定要重置密码吗？"
+                @confirm="resetPass(scope.row.id)"
+            >
+              <el-button type="text" slot="reference"  v-if="hasAuth('sys:user:repass')">重置密码</el-button>
+            </el-popconfirm>
+          </template>
           <el-divider direction="vertical" v-if="hasAuth('sys:user:edit')"></el-divider>
           <el-button type="text" v-if="hasAuth('sys:user:edit')" @click="editHandle(scope.row.id)">编辑</el-button>
           <el-divider direction="vertical" v-if="hasAuth('sys:user:delete')"></el-divider>
           <template>
             <el-popconfirm title="确定删除吗？" @confirm="delHandle(scope.row.id)">
-              <el-button slot="reference" v-if="hasAuth('sys:user:delete')" type="text">删除</el-button>
+              <el-button  slot="reference"  v-if="hasAuth('sys:user:delete')" type="text">删除</el-button>
             </el-popconfirm>
           </template>
         </template>
@@ -128,6 +136,12 @@
       <el-form :model="editForm" :rules="editFormRules" ref="editForm" label-width="100px">
         <el-form-item label="用户名" prop="username" label-width="100px">
           <el-input v-model="editForm.username" autocomplete="off"></el-input>
+          <el-alert
+              title="初始密码为888888"
+              :closable="false"
+              type="info"
+              style="line-height: 12px;"
+          ></el-alert>
         </el-form-item>
 
         <el-form-item label="邮箱" prop="email" label-width="100px">
@@ -260,7 +274,18 @@ export default {
       this.current = val
       this.getRoleList()
     },
-
+    resetPass(id){
+      this.$axios.post("/sys/user/repass",id).then(res =>{
+        this.$message({
+          message: '操作成功',
+          type: 'success',
+          duration: 2000,
+          onClose: () => {
+            this.getRoleList()
+          }
+        });
+      })
+    },
     openHandler() {
       this.editForm = {};
       this.dialogVisible = true;
@@ -317,7 +342,7 @@ export default {
       this.$axios.get('/sys/user/list',
           {
             params: {
-              name: this.searchForm.name,
+              username: this.searchForm.username,
               current: this.current,
               size: this.size
             }
@@ -331,10 +356,14 @@ export default {
     roleHandle(id) {
       this.roleDialog = true
       //获取可用角色信息
-      this.$axios.get('/sys/role/list/'+ id).then(res =>{
-        //this.$refs.permTree.setCheckedKeys(res.data.data.menuIds);
+      this.$axios.get('/sys/user/info/'+id).then(res =>{
+        this.RoleForm = res.data.data
+        var ids = []
+        res.data.data.sysRoles.forEach(row =>{
+          ids.push(row.id)
+        })
 
-        this.RoleForm = res.data.data.records
+        this.$refs.RoleTree.setCheckedKeys(ids)
       })
 
     },
@@ -346,7 +375,7 @@ export default {
     submitRoleForm(){
       //权限要给到某一个用户上边所以+RoleForm.id
       var menuIds = this.$refs.RoleTree.getCheckedKeys()
-      this.$axios.post('/sys/user/role'+this.RoleForm.id,menuIds).then(res=>{
+      this.$axios.post('/sys/user/role/'+this.RoleForm.id,menuIds).then(res=>{
         this.$message({
           message: '操作成功',
           type: 'success',

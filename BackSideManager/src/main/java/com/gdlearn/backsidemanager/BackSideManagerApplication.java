@@ -1,0 +1,13 @@
+package com.gdlearn.backsidemanager;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class BackSideManagerApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(BackSideManagerApplication.class, args);
+    }
+
+}

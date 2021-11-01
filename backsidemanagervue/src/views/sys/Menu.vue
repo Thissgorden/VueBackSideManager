@@ -254,7 +254,7 @@ export default {
       this.dialogVisible = true;
     },
     delHandle(id){
-      this.$axios.post('/sys/menu/delete' + id).then(res =>{
+      this.$axios.post('/sys/menu/delete/' + id).then(res =>{
         this.$message({
           message: '操作成功',
           type: 'success',

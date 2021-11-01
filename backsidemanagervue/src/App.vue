@@ -5,6 +5,7 @@
 <script>
 export default {
   name: "App",
+  /*
   watch: {
     $route(to, from) {
       if (to.path !== '/login') {
@@ -16,7 +17,7 @@ export default {
           this.$store.commit("addTab",obj)
       }
     }
-  }
+  }*/
 }
 
 

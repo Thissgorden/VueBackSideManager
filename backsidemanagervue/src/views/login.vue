@@ -27,7 +27,7 @@
 
         <el-form-item label="验证码" prop="code">
           <el-input v-model="loginForm.code" class="codeinput"></el-input>
-          <el-image :src="captchaImg" class="codeimg"></el-image>
+          <el-image :src="captchaImg" @click="getCaptcha" class="codeimg"></el-image>
         </el-form-item>
 
         <el-form-item>
@@ -42,14 +42,16 @@
 </template>
 
 <script>
+import qs from 'qs'
 export default {
   name: "login",
   data() {
     return {
       loginForm: {
-        username: '',
-        password: '',
-        code: '',
+        username: 'admin ',
+        password: '11111',
+        code: '55555',
+        key:'55555'
       },
       rules: {
         username: [
@@ -72,11 +74,14 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$axios.post("/Ulogin", this.loginForm).then(res =>{
+          this.$axios.post('/login?'+qs.stringify(this.loginForm)).then(res =>{
             const jwt = res.headers['authorization']
 
             this.$store.commit('SET_TOKEN',jwt)
 
+
+
+            this.$store.commit("addTab",{title: '首页', name: 'Index'})
             this.$router.push('/index')
           })
         } else {
@@ -93,10 +98,9 @@ export default {
      * 获取验证码的方法
      */
     getCaptcha() {
-      this.$axios.get('/getCaptcha').then(res => {
-        this.loginForm.token = res.data.data.token//存储返回的token
-        this.captchaImg =res.data.data.captchaImg
-
+      this.$axios.get('/captcha').then(res => {
+        this.loginForm.key = res.data.data.key//存储返回的token
+        this.captchaImg =res.data.data.base64Img
       });
     }
   },
@@ -121,12 +125,12 @@ export default {
 
 .codeimg {
   margin-left: 8px;
-  width: 80px;
+  width: 100px;
   float: left;
 }
 
 .codeinput {
-  width: 80px;
+  width: 90px;
   float: left;
 }
 

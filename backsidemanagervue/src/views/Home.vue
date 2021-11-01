@@ -15,7 +15,7 @@
               </span>
               <el-dropdown-menu slot="dropdown">
 
-                <el-dropdown-item><router-link to="/userCenter">个人中心</router-link></el-dropdown-item>
+                <el-dropdown-item @click.native="selectMenu({title: '个人中心', name: 'usercenter'})"><router-link to="/userCenter" >个人中心</router-link></el-dropdown-item>
 
                 <el-dropdown-item @click.native="logout">退出</el-dropdown-item>
               </el-dropdown-menu>
@@ -55,9 +55,14 @@ export default {
     }
   },
   methods: {
+    selectMenu(item){
+      console.log("selectmenu方法执行了")
+      this.$store.commit("addTab",item)
+    },
     getUserinfo() {
       this.$axios.get("/sys/userInfo").then(res => {
         this.userInfo = res.data.data;
+        this.$store.commit("SET_USERINFO",res.data.data);
       });
     },
     logout(){

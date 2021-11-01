@@ -315,7 +315,7 @@ export default {
     submitPermForm(){
       //权限要给到某一个用户上边所以+permForm.id
       var menuIds = this.$refs.permTree.getCheckedKeys()
-      this.$axios.post('/sys/role/perm'+this.permForm.id,menuIds).then(res=>{
+      this.$axios.post('/sys/role/perm/'+this.permForm.id,menuIds).then(res=>{
         this.$message({
           message: '操作成功',
           type: 'success',

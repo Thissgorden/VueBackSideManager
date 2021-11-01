@@ -1,10 +1,23 @@
 <template>
-  <h1>我是index页面的内容</h1>
+  <div>
+    <h2>欢迎使用后台管理系统</h2>
+  </div>
+
 </template>
 
 <script>
 export default {
-  name:"index"
+  name:"index",
+  data(){
+    return{
+      MenuList:{},
+      Authority:{}
+    }
+  },
+  created() {
+    this.MenuList = this.$store.state.menus.menuList
+    this.Authority = this.$store.state.menus.level
+  }
 }
 </script>
 

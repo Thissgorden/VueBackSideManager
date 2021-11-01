@@ -10,11 +10,8 @@ export default {
 
         hasRoute: false,
 
-        editableTabsValue: 'Index',
-        editableTabs: [{
-            title: '首页',
-            name: 'Index',
-        }]
+        editableTabsValue: 'index',
+        editableTabs: [{title: '首页', name: 'Index'}]
     },
     mutations: {
         setMenuList(state,menus){
@@ -34,9 +31,6 @@ export default {
             let index = state.editableTabs.findIndex(e => e.name === tab.name);
 
             if(index === -1){
-
-
-
             state.editableTabs.push({
                 title: tab.title,
                 name: tab.name,
